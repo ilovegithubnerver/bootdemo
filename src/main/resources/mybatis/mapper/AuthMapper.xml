@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shiyi.mapper.AuthMapper">
+
+
+
+	<!-- getplatform_message -->
+	<select id="getplatform_message" parameterType="pd" resultType="pd">
+		SELECT *
+		FROM auth
+		where platform_code =#{platform_code}
+	</select>
+	<!-- updateplatform_message -->
+	<update id="updateplatform_message" parameterType="pd">
+		update
+		auth
+		set
+		surplus_num = surplus_num -1
+		where
+		platform_code =#{platform_code}
+	</update>
+	<!-- surplus_auth4_num -->
+	<update id="updateplatform_messageauth4" parameterType="pd">
+		update
+		auth
+		set
+		surplus_auth4_num = surplus_auth4_num -1
+		where
+		platform_code =#{platform_code}
+	</update>
+	<!-- updateplatform_messagecard -->
+	<update id="updateplatform_messagecard" parameterType="pd">
+		update
+		auth
+		set
+		surplus_card_num = surplus_card_num -1
+		where
+		platform_code =#{platform_code}
+	</update>
+	<!-- AuthCreditCardPre -->
+	<insert id="AuthCreditCardPre" parameterType="pd">
+		insert into
+		card_auth
+		(
+		trans_id,create_by,creat_time,bank_card_no,user_crad_name,id_card_no,req_from,desp_code
+		) values (
+		#{trans_id},#{username},#{create_time},#{bank_crad_no},#{user_crad_name},#{id_card_no},#{platform_code},'00'
+		)
+	</insert>
+	<!-- cheauth -->
+	<select id="cheauth" parameterType="pd" resultType="pd">
+		SELECT *
+		FROM card_auth
+		where bank_card_no =#{bank_crad_no}
+		and user_crad_name = #{user_crad_name}
+		<if test="id_card_no!= null and id_card_no != ''"><!-- 关键词检索 -->
+			and
+			id_card_no = #{id_card_no}
+		</if>
+		<if test="tel!= null and tel != ''"><!-- 关键词检索 -->
+			and
+			create_by = #{tel}
+		</if>
+		limit 0,1
+	</select>
+	<!-- checkBankCard -->
+	<select id="checkBankCard" parameterType="pd" resultType="pd">
+		SELECT cardtype from bank_auth where cardprefixnum = #{cardprefixnum} and
+		lenth = #{lenth} limit 0,1 ;
+	</select>
+	<!-- savebanktype -->
+	<insert id="savebanktype" parameterType="pd">
+		insert into
+		bank_auth
+		(
+		cardprefixnum,
+		lenth,
+		banknum,
+		bankname,
+		cardtype,
+		servicephone
+		) values (
+		#{cardprefixnum},
+		#{lenth},
+		#{banknum},
+		#{bankname},
+		#{cardtype},
+		#{servicephone}
+		)
+	</insert>
+	<!-- saveplatform_message -->
+	<insert id="saveplatform_message" parameterType="pd">
+		insert into
+		transruning
+		(
+		tel,
+		bank_crad_no,
+		chauth,
+		chcardtype,
+		user_crad_name,
+		platform_code,
+		ch_Time
+		) values (
+		#{tel},
+		#{bank_crad_no},
+		#{chauth},
+		#{chcardtype},
+		#{user_crad_name},
+		#{platform_code},
+		#{ch_Time}
+		)
+	</insert>
+
+
+
+
+	<!-- 柳嘉宾 -->
+	<select id="findShortMessage" parameterType="pd" resultType="pd">
+		select * from short_message as a where
+		a.platform_code=#{platform_code}
+
+	</select>
+
+	<insert id="saveShortMessage" parameterType="pd">
+		insert into
+		short_message(platform_code,phone_no,message_content)
+		values(#{platform_code},#{phone_no},#{message_content})
+	</insert>
+
+</mapper>
